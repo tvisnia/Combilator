@@ -3,7 +3,8 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="drawer_open">open</string>
+    <string name="drawer_close">close</string>
     <string name="n_symbol">N</string>
     <string name="k_symbol">K</string>
-    <string name="policz">Licz!</string>
 </resources>

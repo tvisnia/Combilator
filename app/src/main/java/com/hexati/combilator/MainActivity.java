@@ -24,9 +24,6 @@ import java.math.BigInteger;
 
 public class MainActivity extends FragmentActivity {
 
-
-
-
     /**
      * The number of pages (wizard steps) to show in this demo.
      */
