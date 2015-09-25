@@ -20,21 +20,20 @@ import utils.AnimationUtils;
  * Created by tomek on 21.09.15.
  */
 
-public class NewtonBinomialFragment extends Fragment {
+public class CountingFragment extends Fragment {
 
     private FloatingActionButton countNewtonButton;
     private EditText nInput;
     private EditText kInput;
     private TextView newtonResult;
-    private TextView vResult;
-    private TextView wResult;
-    private TextView permutationResult;
+    private int nValue;
+    private int kValue;
     private BigInteger valueNewton = new BigInteger("1");
     private BigInteger valueV = new BigInteger("1");
     private BigInteger valueW = new BigInteger("1");
     private BigInteger valueFactorial = new BigInteger("1");
 
-    public NewtonBinomialFragment() {
+    public CountingFragment() {
         // Required empty public constructor
     }
 
@@ -54,23 +53,14 @@ public class NewtonBinomialFragment extends Fragment {
                     String nInputText = nInput.getText().toString();
                     String kInputText = kInput.getText().toString();
 
-                    if (TextUtils.isEmpty(kInputText) || TextUtils.isEmpty(nInputText)) {
+                    if (!isInteger(nInputText, kInputText) || isEmpty(kInputText, kInputText)) {
                         AnimationUtils.animateButton(countNewtonButton, false);
                         Toast.makeText(v.getContext(), "Wprowadź N i K !", Toast.LENGTH_SHORT).show();
                     } else {
-                        int nValue = Integer.valueOf(nInputText);
-                        int kValue = Integer.valueOf(kInputText);
+                        nValue = Integer.valueOf(nInputText);
+                        kValue = Integer.valueOf(kInputText);
 
-                        if (nValue == kValue || kValue == 0) {
-                            newtonResult.setText("1");
-                            AnimationUtils.animateButton(countNewtonButton, true);
-                        } else if (kValue > nValue) {
-                            AnimationUtils.animateButton(countNewtonButton, false);
-                            Toast.makeText(v.getContext(), "N => K", Toast.LENGTH_SHORT).show();
-                        } else {
-                            AnimationUtils.animateButton(countNewtonButton, true);
-                            newtonResult.setText(String.valueOf(countNewtonBinomial(nValue, kValue)));
-                        }
+                        setNewtonResult();
                     }
                 }
         );
@@ -85,6 +75,28 @@ public class NewtonBinomialFragment extends Fragment {
         }
 
         return valueNewton;
+    }
+
+    private boolean isInteger(String nSymbol, String kSymbol) {
+        return (nSymbol.matches("^-?\\d+$") && kSymbol.matches("^-?\\d+$"));
+        //check whether String is Integer using regular expression
+    }
+
+    private boolean isEmpty(String nSymbol, String kSymbol) {
+        return (TextUtils.isEmpty(nSymbol) || TextUtils.isEmpty(kSymbol));
+    }
+
+    private void setNewtonResult() {
+        if (nValue == kValue || kValue == 0) {
+            newtonResult.setText("1");
+            AnimationUtils.animateButton(countNewtonButton, true);
+        } else if (kValue > nValue) {
+            AnimationUtils.animateButton(countNewtonButton, false);
+            Toast.makeText(getActivity().getApplicationContext(), "N => K", Toast.LENGTH_SHORT).show();
+        } else {
+            AnimationUtils.animateButton(countNewtonButton, true);
+            newtonResult.setText(String.valueOf(countNewtonBinomial(nValue, kValue)));
+        }
     }
 }
 

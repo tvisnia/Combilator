@@ -7,7 +7,12 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <include layout="@layout/toolbar" />
+    <include layout="@layout/toolbar_top" />
+
+    <include layout="@layout/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        />
 
 
     <android.support.v4.widget.DrawerLayout

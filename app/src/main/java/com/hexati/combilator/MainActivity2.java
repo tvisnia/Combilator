@@ -12,9 +12,6 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-import roboguice.activity.RoboActionBarActivity;
-import roboguice.inject.ContentView;
-
 /**
  * Created by tomek on 22.09.15.
  */
@@ -22,14 +19,13 @@ public class MainActivity2 extends AppCompatActivity {
 
     private static final String BOSS_NAME = "Tomasz Wiśniewski";
     private static final String BOSS_EMAIL = "tomek97@gmail.com";
-    private static final String TOOLBAR_TITLE = "Combilator";
 
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private RecyclerView leftDrawerList;
     private ActionBarDrawerToggle drawerToggle;
     private NavigationDrawerAdapter drawerAdapter;
-    private NewtonBinomialFragment newtonFragment;
+    private CountingFragment newtonFragment;
 
 
     private String[] leftSliderData = {"Kombinacje", "Wariacje z powtórzeniami", "Wariacje bez powtórzeń"};
@@ -43,13 +39,12 @@ public class MainActivity2 extends AppCompatActivity {
         initView();
         initToolbar();
         initDrawer();
-        newtonFragment = new NewtonBinomialFragment();
+        newtonFragment = new CountingFragment();
         onNavDrawerItemClickHandler(1);
     }
 
     private void initToolbar() {
         if (toolbar != null) {
-            toolbar.setTitle(TOOLBAR_TITLE);
             setSupportActionBar(toolbar);
         }
     }
@@ -57,7 +52,7 @@ public class MainActivity2 extends AppCompatActivity {
     private void initView() {
         leftDrawerList = (RecyclerView) findViewById(R.id.left_drawer);
         leftDrawerList.setHasFixedSize(true);
-        drawerAdapter = new NavigationDrawerAdapter(leftSliderData,icons , BOSS_NAME, BOSS_EMAIL, R.drawable.unnamed, this);
+        drawerAdapter = new NavigationDrawerAdapter(leftSliderData, icons, BOSS_NAME, BOSS_EMAIL, R.drawable.unnamed, this);
 
         leftDrawerList.setAdapter(drawerAdapter);
         mLayoutManager = new LinearLayoutManager(this);
@@ -80,8 +75,7 @@ public class MainActivity2 extends AppCompatActivity {
                 if (child != null && mDetector.onTouchEvent(motionEvent)) {
                     onNavDrawerItemClickHandler(leftDrawerList.getChildAdapterPosition(child));
                     return true;
-                }
-                else return false;
+                } else return false;
             }
 
 

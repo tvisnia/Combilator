@@ -7,4 +7,5 @@
     <string name="drawer_close">close</string>
     <string name="n_symbol">N</string>
     <string name="k_symbol">K</string>
+    <string name="toolbar_title">Combilator</string>
 </resources>
