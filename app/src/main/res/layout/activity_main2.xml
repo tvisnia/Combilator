@@ -16,19 +16,20 @@
 
 
     <android.support.v4.widget.DrawerLayout
+        android:layout_marginTop="75dp"
         android:id="@+id/drawerLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <!-- activity view -->
         <FrameLayout
-            android:layout_marginTop="75dp"
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#fff"></FrameLayout>
-        <include layout="@layout/fragment_binomial_newton"
-            android:layout_marginTop="75dp"
+            android:background="#ffff">
+
+        </FrameLayout>
+        <include layout="@layout/counting_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             />

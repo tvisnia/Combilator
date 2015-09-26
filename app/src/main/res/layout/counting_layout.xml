@@ -34,7 +34,7 @@
                 tools:context=".MainActivity">
 
                 <EditText
-                    android:id="@+id/newton_nInput"
+                    android:id="@+id/n_Input"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:digits="0123456789."
@@ -42,13 +42,20 @@
                     android:inputType="numberDecimal" />
 
                 <EditText
-                    android:id="@+id/newton_kInput"
+                    android:id="@+id/k_Input"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:digits="0123456789."
                     android:hint="@string/k_symbol"
                     android:inputType="numberDecimal" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/permutation_symbol"
+                android:layout_width="50dp"
+                android:layout_height="150dp"
+                android:text="@string/permutation_symbol"
+                android:textSize="@dimen/permutation_symbol_size"/>
 
         </LinearLayout>
 

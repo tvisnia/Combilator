@@ -2,6 +2,19 @@
 <resources>
     <color name="primaryColor">#ff58a1ff</color>
     <color name="primaryColorDark">#ff2c18ff</color>
+    <color name="layoutColor1">@android:color/holo_blue_light</color>
+
+    <color name="layoutColor2">#81F781</color>
+    <color name="toolbarColor2">#00FF00</color>
+    <color name="topToolbarColor2">#82FA58</color>
+
+    <color name="layoutColor3">#FFFF00</color>
+    <color name="toolbarColor3">#FFBF00</color>
+    <color name="topToolbarColor3">#FF8000</color>
+
+    <color name="layoutColor4">#FA8258</color>
+    <color name="toolbarColor4">#FE642E</color>
+    <color name="topToolbarColor4">#FE2E2E</color>
 
 
 
