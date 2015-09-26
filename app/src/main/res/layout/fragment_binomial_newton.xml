@@ -54,7 +54,7 @@
 
         <LinearLayout
 
-            android:id="@+id/viewB"
+            android:id="@+id/coloredLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.4"

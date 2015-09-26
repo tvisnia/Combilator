@@ -4,6 +4,7 @@
 !settings.gradle
 .DS_Store
 # built application files
+/app/src/main/java/com/hexati/combilator/CountingFragment.java
 # files for the dex VM
 # Java class files
 

@@ -1,16 +1,22 @@
 package com.hexati.combilator;
 
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import java.math.BigInteger;
 
@@ -22,6 +28,7 @@ import utils.AnimationUtils;
 
 public class CountingFragment extends Fragment {
 
+    private static final java.lang.String NAV_DRAWER_ITEM_CLICKED_POS_KEY ="key1" ;
     private FloatingActionButton countNewtonButton;
     private EditText nInput;
     private EditText kInput;
@@ -32,6 +39,11 @@ public class CountingFragment extends Fragment {
     private BigInteger valueV = new BigInteger("1");
     private BigInteger valueW = new BigInteger("1");
     private BigInteger valueFactorial = new BigInteger("1");
+    private Toolbar upperToolbar;
+    private Toolbar lowerToolbar;
+    private LinearLayout coloredLayout;
+
+    private int navDrawerItemClicked;
 
     public CountingFragment() {
         // Required empty public constructor
@@ -98,6 +110,22 @@ public class CountingFragment extends Fragment {
             newtonResult.setText(String.valueOf(countNewtonBinomial(nValue, kValue)));
         }
     }
+
+//    public void Action(Context context, int position) {
+////        if(!isAdded()) {
+////            return;
+////        }
+//        Toast.makeText(context, position + "", Toast.LENGTH_SHORT)
+//                .show();
+//        switch (position) {
+//            case 1 : {
+//                coloredLayout.setBackgroundColor(getResources().getColor(android.R.color.holo_orange_light));
+////                lowerToolbar.setBackgroundColor(getResources().getColor(android.R.color.holo_orange_light));
+//                upperToolbar.setBackgroundColor(getResources().getColor(android.R.color.holo_orange_light));
+//                break;
+//            }
+//        }
+//    }
 }
 
 
