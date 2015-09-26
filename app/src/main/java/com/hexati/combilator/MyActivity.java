@@ -1,5 +1,7 @@
 package com.hexati.combilator;
 
+import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -14,6 +16,7 @@ import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -62,7 +65,7 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
     LinearLayout coloredLayout;
 
     private String[] leftSliderData = {"Kombinacje", "Wariacje z powtórzeniami", "Wariacje bez powtórzeń", "Permutacje"};
-    private int[] icons = {R.drawable.nozyce, R.drawable.list, R.drawable.miotla, R.drawable.nozyce};
+    private int[] icons = {R.drawable.newton, R.drawable.w, R.drawable.v, R.drawable.silnia};
     private LinearLayoutManager mLayoutManager;
 
     private Toolbar topToolbar;
@@ -71,6 +74,7 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setDefaultColors();
         setContentView((R.layout.activity_main2));
@@ -318,17 +322,15 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
             AnimationUtils.animateButton(countNewtonButton, false);
             Toast.makeText(v.getContext(), "Wprowadź prawidłowe dane !", Toast.LENGTH_SHORT).show();
             resultTextView.setText("");
-        }
-        else if(clickedPosition ==2) {
+        } else if (clickedPosition == 2) {
             nValue = Integer.valueOf(nInputText);
             kValue = Integer.valueOf(kInputText);
             AnimationUtils.animateButton(countNewtonButton, true);
             resultTextView.setText(String.valueOf(countVariationWithRepetition(nValue, kValue)));
-        }
-            else if (kValue > nValue) {
-                AnimationUtils.animateButton(countNewtonButton, false);
-                Toast.makeText(v.getContext(), "Wprowadź prawidłowe dane !", Toast.LENGTH_SHORT).show();
-                resultTextView.setText("");
+        } else if (kValue > nValue) {
+            AnimationUtils.animateButton(countNewtonButton, false);
+            Toast.makeText(v.getContext(), "Wprowadź prawidłowe dane !", Toast.LENGTH_SHORT).show();
+            resultTextView.setText("");
         } else {
             nValue = Integer.valueOf(nInputText);
             kValue = Integer.valueOf(kInputText);
@@ -344,6 +346,7 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
                 }
             }
         }
+        hideSoftKeyboard(this);
     }
 
     private BigInteger countVariationWithRepetition(int n, int k) {
@@ -351,19 +354,22 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
         BigInteger toReturn = null;
         if (k == 0)
             toReturn = BigInteger.valueOf(1);
-        else
-        if (n > 0) {
-            for (int i = 0; i < k-1 ; i++) {
+        else if (n > 0) {
+            for (int i = 0; i < k - 1; i++) {
                 valueW = valueW.multiply(BigInteger.valueOf(n));
             }
             toReturn = valueW;
-        }
-        else if (n == 0)
+        } else if (n == 0)
             toReturn = BigInteger.valueOf(0);
         return toReturn;
     }
 
     private BigInteger countFactorial(int i) {
         return i == 0 ? BigInteger.valueOf(1) : countFactorial(i - 1).multiply(BigInteger.valueOf(i));
+    }
+
+    private static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 }

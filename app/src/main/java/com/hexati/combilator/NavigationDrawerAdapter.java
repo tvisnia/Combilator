@@ -31,7 +31,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         int Holderid;
         Context contxt;
         TextView textView;
-        ImageView profile;
+//        ImageView profile;
         ImageView icon;
         TextView Name;
         TextView email;
@@ -49,7 +49,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
             } else {
                 Name = (TextView) itemView.findViewById(R.id.name);         // Creating Text View object from header.xml for name
                 email = (TextView) itemView.findViewById(R.id.email);       // Creating Text View object from header.xml for email
-                profile = (ImageView) itemView.findViewById(R.id.circleView);// Creating Image view object from header.xml for profile pic
+//                profile = (ImageView) itemView.findViewById(R.id.circleView);// Creating Image view object from header.xml for profile pic
                 Holderid = 0;                                                // Setting holder id = 0 as the object being populated are of type header view
             }
         }
@@ -62,7 +62,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
         mIcons = icons;
         name = Name;
         email = Email;
-        profile = Profile;                     //here we assign those passed values to the values we declared here
+//        profile = Profile;                     //here we assign those passed values to the values we declared here
         //in adapter
         this.context = passedContext;
     }
@@ -107,7 +107,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
             holder.textView.setText(mNavTitles[position - 1]);// Setting the Text with the array of our Titles
             holder.icon.setImageResource(mIcons[position-1]);
         } else {
-            holder.profile.setImageResource(profile);           // Similarly we set the resources for header view
+//            holder.profile.setImageResource(profile);           // Similarly we set the resources for header view
             holder.Name.setText(name);
             holder.email.setText(email);
         }
