@@ -1,11 +1,17 @@
-<android.support.v7.widget.Toolbar
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toolbar"
-    android:background="@color/primaryColor"
-    app:theme="@style/AppTheme.DownToolbar"
-
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="?attr/actionBarSize">
+
+    android:background="@color/primaryColor"
+    android:minHeight="?attr/actionBarSize"
+    app:theme="@style/AppTheme.DownToolbar">
+
+    <TextView
+        android:id="@+id/current_counting"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:textSize="25dp" />
 </android.support.v7.widget.Toolbar>

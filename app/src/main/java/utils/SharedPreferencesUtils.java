@@ -1,4 +1,4 @@
-package com.hexati.combilator;
+package utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;

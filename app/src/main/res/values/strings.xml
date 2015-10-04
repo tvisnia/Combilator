@@ -9,4 +9,7 @@
     <string name="k_symbol">K</string>
     <string name="toolbar_title">Combilator</string>
     <string name="permutation_symbol">!</string>
+    <string name="error_input_message">Wprowadź prawidłowe dane !</string>
+    <string name="empty_text" />
+    <string name="title_activity_">Activity</string>
 </resources>

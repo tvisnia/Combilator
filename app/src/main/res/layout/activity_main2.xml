@@ -10,10 +10,10 @@
 
     <include
         layout="@layout/toolbar"
-        android:layout_marginTop="30dp"
-        android:layout_width="match_parent"
-        android:layout_height="50dp" />
 
+        android:layout_marginTop="26dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
 
     <android.support.v4.widget.DrawerLayout
         android:layout_marginTop="75dp"

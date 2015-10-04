@@ -3,6 +3,6 @@
     android:id="@+id/toolbar_top"
     android:background="@color/primaryColorDark"
     android:layout_width="match_parent"
-    android:layout_height="30dp"
+    android:layout_height="26dp"
     android:minHeight="?attr/actionBarSize"/>
     <!--app:titleTextAppearance="@style/AppTheme.Toolbar.Title"-->

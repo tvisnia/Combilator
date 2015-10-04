@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
@@ -13,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.text.method.ScrollingMovementMethod;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nineoldandroids.animation.ValueAnimator;
 
 import java.math.BigInteger;
@@ -36,18 +39,36 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
     private static final String BOSS_NAME = "Tomasz Wiśniewski";
     private static final String BOSS_EMAIL = "tomek97@gmail.com";
     private static final long COLOR_CHANGE_ANIMATION_DURATION = 1000;
+    private static final String COMBINATION = "Kombinacje";
+    private static final String V_VARIATION = "Wariacje bez powtórzeń";
+    private static final String W_VARIATION = "Wariacje z powtórzeniami";
+    private static final String PERMUTATION = "Permutacje";
+
 
     private FloatingActionButton countNewtonButton;
     private EditText nInput;
     private EditText kInput;
     private TextView permutationSymbol;
     private TextView resultTextView;
+    private CircularProgressView progressView;
+    private TextView currentCountingTextView;
+
+    private Toolbar toolbar;
+    private DrawerLayout drawerLayout;
+    private RecyclerView leftDrawerList;
+    private ActionBarDrawerToggle drawerToggle;
+    private NavigationDrawerAdapter drawerAdapter;
+
+    private LinearLayout coloredLayout;
+
+
     private int nValue;
     private int kValue;
     private BigInteger valueNewton = new BigInteger("1");
     private BigInteger valueV = new BigInteger("1");
     private BigInteger valueW = new BigInteger("1");
     private BigInteger valueFactorial = new BigInteger("1");
+    private int iterator;
 
     private Integer toolbarColorFrom;
     private Integer toolbarColorTo;
@@ -56,15 +77,10 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
     private Integer layoutColorFrom;
     private Integer layoutColorTo;
 
-    private Toolbar toolbar;
-    private DrawerLayout drawerLayout;
-    private RecyclerView leftDrawerList;
-    private ActionBarDrawerToggle drawerToggle;
-    private NavigationDrawerAdapter drawerAdapter;
+    private String nInputText;
+    private String kInputText;
 
-    LinearLayout coloredLayout;
-
-    private String[] leftSliderData = {"Kombinacje", "Wariacje z powtórzeniami", "Wariacje bez powtórzeń", "Permutacje"};
+    private String[] leftSliderData = {COMBINATION, W_VARIATION, V_VARIATION, PERMUTATION};
     private int[] icons = {R.drawable.newton, R.drawable.w, R.drawable.v, R.drawable.silnia};
     private LinearLayoutManager mLayoutManager;
 
@@ -81,8 +97,8 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
         init();
         initToolbar();
         initDrawer();
-
-        onNavDrawerItemClickHandler(1);
+        clickedPosition = 1;
+        onNavDrawerItemClickHandler(clickedPosition);
 
     }
 
@@ -93,14 +109,11 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
     }
 
     private void init() {
-        countNewtonButton = (FloatingActionButton) findViewById(R.id.button_count_newton);
-        countNewtonButton.setImageResource(R.drawable.icon_numbers);
-        countNewtonButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(android.R.color.holo_orange_light)));
-        countNewtonButton.setOnClickListener(this);
+        currentCountingTextView = (TextView) findViewById(R.id.current_counting);
+        currentCountingTextView.setText(COMBINATION);
         leftDrawerList = (RecyclerView) findViewById(R.id.left_drawer);
         leftDrawerList.setHasFixedSize(true);
         drawerAdapter = new NavigationDrawerAdapter(leftSliderData, icons, BOSS_NAME, BOSS_EMAIL, R.drawable.unnamed, this);
-
         leftDrawerList.setAdapter(drawerAdapter);
         mLayoutManager = new LinearLayoutManager(this);
         permutationSymbol = (TextView) findViewById(R.id.permutation_symbol);
@@ -109,9 +122,15 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
     }
 
     private void initCountingViews() {
+        countNewtonButton = (FloatingActionButton) findViewById(R.id.button_count_newton);
+        countNewtonButton.setImageResource(R.drawable.icon_numbers);
+        countNewtonButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(android.R.color.holo_orange_light)));
+        countNewtonButton.setOnClickListener(this);
         nInput = (EditText) findViewById(R.id.n_Input);
         kInput = (EditText) findViewById(R.id.k_Input);
         resultTextView = (TextView) findViewById(R.id.result_newton);
+        resultTextView.setMovementMethod(new ScrollingMovementMethod());
+        progressView = (CircularProgressView) findViewById(R.id.progress_view);
     }
 
     private void initDrawer() {
@@ -134,7 +153,6 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
                 } else return false;
             }
 
-
             @Override
             public void onTouchEvent(RecyclerView rv, MotionEvent e) {
 
@@ -144,6 +162,7 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
             public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
 
             }
+
         });
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         topToolbar = (Toolbar) findViewById(R.id.toolbar_top);
@@ -179,11 +198,43 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
     }
 
 
+    private class CountTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            progressView.setVisibility(View.VISIBLE);
+            progressView.setIndeterminate(true);
+            progressView.startAnimation();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            nValue = Integer.valueOf(nInputText);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressView.resetAnimation();
+                }
+            });
+            countLoopedFactorial(nValue);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            resultTextView.setText(String.valueOf(valueFactorial));
+            AnimationUtils.animateButton(countNewtonButton, true);
+            progressView.setIndeterminate(false);
+        }
+
+    }
+
     public void onNavDrawerItemClickHandler(int position) {
         clickedPosition = position;
         savePreviousColors();
         drawerLayout.closeDrawers();
         if (position == 4) {
+            currentCountingTextView.setText(PERMUTATION);
             layoutColorTo = getResources().getColor(R.color.layoutColor4);
             toolbarColorTo = getResources().getColor(R.color.toolbarColor4);
             toolbarTopColorTo = getResources().getColor(R.color.topToolbarColor4);
@@ -195,18 +246,21 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
             kInput.setVisibility(View.VISIBLE);
             switch (position) {
                 default: {
+                    currentCountingTextView.setText(COMBINATION);
                     layoutColorTo = getResources().getColor(R.color.layoutColor1);
                     toolbarColorTo = getResources().getColor(R.color.primaryColor);
                     toolbarTopColorTo = getResources().getColor(R.color.primaryColorDark);
                     break;
                 }
                 case 2: {
+                    currentCountingTextView.setText(W_VARIATION);
                     layoutColorTo = getResources().getColor(R.color.layoutColor2);
                     toolbarColorTo = getResources().getColor(R.color.toolbarColor2);
                     toolbarTopColorTo = getResources().getColor(R.color.topToolbarColor2);
                     break;
                 }
                 case 3: {
+                    currentCountingTextView.setText(V_VARIATION);
                     layoutColorTo = getResources().getColor(R.color.layoutColor3);
                     toolbarColorTo = getResources().getColor(R.color.toolbarColor3);
                     toolbarTopColorTo = getResources().getColor(R.color.topToolbarColor3);
@@ -306,21 +360,19 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        String nInputText = nInput.getText().toString();
-        String kInputText = kInput.getText().toString();
+        nInputText = nInput.getText().toString();
+        kInputText = kInput.getText().toString();
         if (clickedPosition == 4) {
             if (isNSymbolInputEmpty(nInputText) || !isNSymbolInteger(nInputText)) {
-                Toast.makeText(v.getContext(), "Wprowadź prawidłowe dane !", Toast.LENGTH_SHORT).show();
+                Toast.makeText(v.getContext(), R.string.error_input_message, Toast.LENGTH_SHORT).show();
                 AnimationUtils.animateButton(countNewtonButton, false);
-                resultTextView.setText("");
+                resultTextView.setText(R.string.empty_text);
             } else {
-                nValue = Integer.valueOf(nInputText);
-                AnimationUtils.animateButton(countNewtonButton, true);
-                resultTextView.setText(String.valueOf(countFactorial(nValue)));
+                new CountTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         } else if (!isInteger(nInputText, kInputText) || isEmpty(nInputText, kInputText)) {
             AnimationUtils.animateButton(countNewtonButton, false);
-            Toast.makeText(v.getContext(), "Wprowadź prawidłowe dane !", Toast.LENGTH_SHORT).show();
+            Toast.makeText(v.getContext(), R.string.error_input_message, Toast.LENGTH_SHORT).show();
             resultTextView.setText("");
         } else if (clickedPosition == 2) {
             nValue = Integer.valueOf(nInputText);
@@ -329,7 +381,7 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
             resultTextView.setText(String.valueOf(countVariationWithRepetition(nValue, kValue)));
         } else if (kValue > nValue) {
             AnimationUtils.animateButton(countNewtonButton, false);
-            Toast.makeText(v.getContext(), "Wprowadź prawidłowe dane !", Toast.LENGTH_SHORT).show();
+            Toast.makeText(v.getContext(), R.string.error_input_message, Toast.LENGTH_SHORT).show();
             resultTextView.setText("");
         } else {
             nValue = Integer.valueOf(nInputText);
@@ -341,7 +393,7 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
                 }
                 case 3: {
                     AnimationUtils.animateButton(countNewtonButton, true);
-                    resultTextView.setText(String.valueOf(valueV.multiply(countNewtonBinomial(nValue, kValue)).multiply(countFactorial(kValue))));
+                    resultTextView.setText(String.valueOf(valueV.multiply(countNewtonBinomial(nValue, kValue)).multiply(countFactorialRecursively(kValue))));
                     break;
                 }
             }
@@ -364,12 +416,27 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
         return toReturn;
     }
 
-    private BigInteger countFactorial(int i) {
-        return i == 0 ? BigInteger.valueOf(1) : countFactorial(i - 1).multiply(BigInteger.valueOf(i));
+    private BigInteger countLoopedFactorial(int i) {
+        valueFactorial = BigInteger.valueOf(1);
+        iterator = 1;
+        while (iterator < i) {
+            iterator++;
+            valueFactorial = valueFactorial.multiply(BigInteger.valueOf(iterator));
+        }
+        return valueFactorial;
     }
+
+    private BigInteger countFactorialRecursively(int i) {
+        return i == 0 ? BigInteger.valueOf(1) : countFactorialRecursively(i - 1).multiply(BigInteger.valueOf(i));
+    }
+    //wywala stack overflow error, prawdopodobnie dlatego że jest rekurencyjna
 
     private static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+        try {
+            inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 }
