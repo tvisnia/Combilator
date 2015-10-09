@@ -1,5 +1,7 @@
 package com.hexati.combilator;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.content.res.ColorStateList;
@@ -15,9 +17,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -36,13 +40,8 @@ import utils.AnimationUtils;
  */
 public class MyActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String BOSS_NAME = "Tomasz Wiśniewski";
-    private static final String BOSS_EMAIL = "tomek97@gmail.com";
     private static final long COLOR_CHANGE_ANIMATION_DURATION = 1000;
-    private static final String COMBINATION = "Kombinacje";
-    private static final String V_VARIATION = "Wariacje bez powtórzeń";
-    private static final String W_VARIATION = "Wariacje z powtórzeniami";
-    private static final String PERMUTATION = "Permutacje";
+    private static String EMAIL = String.valueOf(R.string.empty_text);
 
 
     private FloatingActionButton countNewtonButton;
@@ -79,17 +78,24 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
 
     private String nInputText;
     private String kInputText;
+    private String[] leftSliderData;
 
-    private String[] leftSliderData = {COMBINATION, W_VARIATION, V_VARIATION, PERMUTATION};
+    private String WELCOME_MESSAGE;
+    private String COMBINATION;
+    private String V_VARIATION;
+    private String W_VARIATION;
+    private String PERMUTATION;
+
     private int[] icons = {R.drawable.newton, R.drawable.w, R.drawable.v, R.drawable.silnia};
     private LinearLayoutManager mLayoutManager;
 
     private Toolbar topToolbar;
     private int clickedPosition;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        initVariablesFromResources();
+        retrieveGoogleAcountId();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
         setDefaultColors();
@@ -99,8 +105,32 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
         initDrawer();
         clickedPosition = 1;
         onNavDrawerItemClickHandler(clickedPosition);
-
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
+
+    private void initVariablesFromResources() {
+        COMBINATION = getResources().getString(R.string.Combination);
+        V_VARIATION = getResources().getString(R.string.variation_without_rep);
+        W_VARIATION = getResources().getString(R.string.variation_with_rep);
+        PERMUTATION = getResources().getString(R.string.permutation);
+        WELCOME_MESSAGE = getResources().getString(R.string.welcome_message);
+
+        leftSliderData = new String[]{COMBINATION, W_VARIATION, V_VARIATION, PERMUTATION};
+    }
+
+    private void retrieveGoogleAcountId() {
+        AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
+        Account[] list = manager.getAccounts();
+        String gmail = null;
+
+        for (Account account : list) {
+            if (account.type.equalsIgnoreCase(getString(R.string.google_package))) {
+                EMAIL = account.name;
+                break;
+            }
+        }
+    }
+
 
     private void initToolbar() {
         if (toolbar != null) {
@@ -113,7 +143,7 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
         currentCountingTextView.setText(COMBINATION);
         leftDrawerList = (RecyclerView) findViewById(R.id.left_drawer);
         leftDrawerList.setHasFixedSize(true);
-        drawerAdapter = new NavigationDrawerAdapter(leftSliderData, icons, BOSS_NAME, BOSS_EMAIL, R.drawable.unnamed, this);
+        drawerAdapter = new NavigationDrawerAdapter(leftSliderData, icons, WELCOME_MESSAGE, EMAIL, R.drawable.unnamed, this);
         leftDrawerList.setAdapter(drawerAdapter);
         mLayoutManager = new LinearLayoutManager(this);
         permutationSymbol = (TextView) findViewById(R.id.permutation_symbol);
@@ -178,6 +208,7 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
 
             @Override
             public void onDrawerOpened(View drawerView) {
+                hideSoftKeyboard(MyActivity.this);
                 super.onDrawerOpened(drawerView);
 
             }
@@ -198,7 +229,7 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
     }
 
 
-    private class CountTask extends AsyncTask<Void, Void, Void> {
+    private class CountFactorialTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected void onPreExecute() {
             progressView.setVisibility(View.VISIBLE);
@@ -209,12 +240,12 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
         @Override
         protected Void doInBackground(Void... params) {
             nValue = Integer.valueOf(nInputText);
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    progressView.resetAnimation();
-                }
-            });
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    progressView.resetAnimation();
+//                }
+//            });
             countLoopedFactorial(nValue);
 
             return null;
@@ -331,7 +362,7 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
         return valueNewton;
     }
 
-    private boolean isNSymbolInteger(String nSymbol) {
+    private boolean isInputInteger(String nSymbol) {
         return (nSymbol.matches("^-?\\d+$"));
     }
 
@@ -344,8 +375,8 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
         return (TextUtils.isEmpty(nSymbol) || TextUtils.isEmpty(kSymbol));
     }
 
-    private boolean isNSymbolInputEmpty(String nSymbol) {
-        return (TextUtils.isEmpty(nSymbol));
+    private boolean isInputEmpty(String Symbol) {
+        return (TextUtils.isEmpty(Symbol));
     }
 
     private void setNewtonResult() {
@@ -358,47 +389,86 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
         }
     }
 
+    private boolean isKSymbolGreater() {
+        return (kValue > nValue);
+    }
+
+    private void setInputsEmpty() {
+        nInput.setText(getResources().getString(R.string.empty_text));
+        kInput.setText(getResources().getString(R.string.empty_text));
+    }
+
     @Override
     public void onClick(View v) {
+        hideSoftKeyboard(this);
         nInputText = nInput.getText().toString();
         kInputText = kInput.getText().toString();
-        if (clickedPosition == 4) {
-            if (isNSymbolInputEmpty(nInputText) || !isNSymbolInteger(nInputText)) {
-                Toast.makeText(v.getContext(), R.string.error_input_message, Toast.LENGTH_SHORT).show();
-                AnimationUtils.animateButton(countNewtonButton, false);
-                resultTextView.setText(R.string.empty_text);
-            } else {
-                new CountTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            }
-        } else if (!isInteger(nInputText, kInputText) || isEmpty(nInputText, kInputText)) {
-            AnimationUtils.animateButton(countNewtonButton, false);
+        if (isInputEmpty(nInputText)
+                || !isInputInteger(nInputText)) {
             Toast.makeText(v.getContext(), R.string.error_input_message, Toast.LENGTH_SHORT).show();
-            resultTextView.setText("");
-        } else if (clickedPosition == 2) {
-            nValue = Integer.valueOf(nInputText);
-            kValue = Integer.valueOf(kInputText);
-            AnimationUtils.animateButton(countNewtonButton, true);
-            resultTextView.setText(String.valueOf(countVariationWithRepetition(nValue, kValue)));
-        } else if (kValue > nValue) {
             AnimationUtils.animateButton(countNewtonButton, false);
-            Toast.makeText(v.getContext(), R.string.error_input_message, Toast.LENGTH_SHORT).show();
-            resultTextView.setText("");
+            setInputsEmpty();
+            resultTextView.setText(R.string.empty_text);
         } else {
             nValue = Integer.valueOf(nInputText);
-            kValue = Integer.valueOf(kInputText);
+            try {
+                kValue = Integer.valueOf(kInputText);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+
             switch (clickedPosition) {
-                default: {
-                    setNewtonResult();
+                case 1: {
+                    if (isKSymbolGreater() || isInputEmpty(kInputText) || (!isInputInteger(kInputText))) {
+                        setInputsEmpty();
+                        AnimationUtils.animateButton(countNewtonButton, false);
+                        Toast.makeText(v.getContext(), R.string.error_input_message, Toast.LENGTH_SHORT).show();
+                        resultTextView.setText(getResources().getString(R.string.empty_text));
+                    } else {
+                        setNewtonResult();
+                    }
                     break;
                 }
+                case 2: {
+                    if (!isInputEmpty(kInputText) && (isInputInteger(kInputText))) {
+                        nValue = Integer.valueOf(nInputText);
+                        kValue = Integer.valueOf(kInputText);
+                        AnimationUtils.animateButton(countNewtonButton, true);
+                        resultTextView.setText(String.valueOf(countVariationWithRepetition(nValue, kValue)));
+                        break;
+                    }
+                }
                 case 3: {
-                    AnimationUtils.animateButton(countNewtonButton, true);
-                    resultTextView.setText(String.valueOf(valueV.multiply(countNewtonBinomial(nValue, kValue)).multiply(countFactorialRecursively(kValue))));
+                    if (isKSymbolGreater() || isInputEmpty(kInputText) || (!isInputInteger(kInputText))) {
+                        setInputsEmpty();
+                        AnimationUtils.animateButton(countNewtonButton, false);
+                        Toast.makeText(v.getContext(), R.string.error_input_message, Toast.LENGTH_SHORT).show();
+                        resultTextView.setText(getResources().getString(R.string.empty_text));
+                    } else {
+                        AnimationUtils.animateButton(countNewtonButton, true);
+                        resultTextView.setText(String.valueOf(valueV.
+                                multiply(countNewtonBinomial(nValue, kValue)).
+                                multiply(countLoopedFactorial(kValue))));
+                    }
+                    break;
+                }
+                case 4: {
+                    Log.d("O co chodzi ?", nInputText);
+                    if (isInputInteger(nInputText)) {
+                        new CountFactorialTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    } else {
+                        AnimationUtils.animateButton(countNewtonButton, false);
+                        Toast.makeText(v.getContext(), R.string.error_input_message, Toast.LENGTH_SHORT).show();
+                        resultTextView.setText(getResources().getString(R.string.empty_text));
+                    }
                     break;
                 }
             }
         }
-        hideSoftKeyboard(this);
+    }
+
+    private void setInputIntegers() {
+
     }
 
     private BigInteger countVariationWithRepetition(int n, int k) {
@@ -439,4 +509,5 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
             e.printStackTrace();
         }
     }
+
 }

@@ -12,4 +12,10 @@
     <string name="error_input_message">Wprowadź prawidłowe dane !</string>
     <string name="empty_text" />
     <string name="title_activity_">Activity</string>
+    <string name="google_package">com.google</string>
+    <string name="welcome_message">"Witaj ! "</string>
+    <string name="Combination">Kombinacje</string>
+    <string name="variation_without_rep">Wariacje bez powtórzeń</string>
+    <string name="variation_with_rep">Wariacje z powtórzeniami</string>
+    <string name="permutation">Permutacje</string>
 </resources>
