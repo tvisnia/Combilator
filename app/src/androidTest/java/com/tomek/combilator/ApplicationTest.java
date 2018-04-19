@@ -1,4 +1,4 @@
-package com.hexati.combilator;
+package com.tomek.combilator;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

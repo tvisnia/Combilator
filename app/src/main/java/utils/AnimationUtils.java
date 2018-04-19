@@ -1,7 +1,6 @@
 package utils;
 
 import android.support.design.widget.FloatingActionButton;
-import android.widget.Button;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;

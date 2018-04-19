@@ -1,4 +1,4 @@
-package com.hexati.combilator;
+package com.tomek.combilator;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.hexati.combilator.R;
 
 /**
  * Created by hp1 on 28-12-2014.

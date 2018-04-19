@@ -1,4 +1,4 @@
-package com.hexati.combilator;
+package com.tomek.combilator;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -17,7 +17,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,11 +28,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
+import com.hexati.combilator.R;
 import com.nineoldandroids.animation.ValueAnimator;
 
 import java.math.BigInteger;
 
-import utils.AnimationUtils;
+import static utils.AnimationUtils.animateButton;
 
 /**
  * Created by tomek on 22.09.15.
@@ -254,7 +254,7 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
         @Override
         protected void onPostExecute(Void aVoid) {
             resultTextView.setText(String.valueOf(valueFactorial));
-            AnimationUtils.animateButton(countNewtonButton, true);
+            animateButton(countNewtonButton, true);
             progressView.setIndeterminate(false);
         }
 
@@ -382,9 +382,9 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
     private void setNewtonResult() {
         if (nValue == kValue || kValue == 0) {
             resultTextView.setText("1");
-            AnimationUtils.animateButton(countNewtonButton, true);
+            animateButton(countNewtonButton, true);
         } else {
-            AnimationUtils.animateButton(countNewtonButton, true);
+            animateButton(countNewtonButton, true);
             resultTextView.setText(String.valueOf(countNewtonBinomial(nValue, kValue)));
         }
     }
@@ -406,7 +406,7 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
         if (isInputEmpty(nInputText)
                 || !isInputInteger(nInputText)) {
             Toast.makeText(v.getContext(), R.string.error_input_message, Toast.LENGTH_SHORT).show();
-            AnimationUtils.animateButton(countNewtonButton, false);
+            animateButton(countNewtonButton, false);
             setInputsEmpty();
             resultTextView.setText(R.string.empty_text);
         } else {
@@ -421,7 +421,7 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
                 case 1: {
                     if (isKSymbolGreater() || isInputEmpty(kInputText) || (!isInputInteger(kInputText))) {
                         setInputsEmpty();
-                        AnimationUtils.animateButton(countNewtonButton, false);
+                        animateButton(countNewtonButton, false);
                         Toast.makeText(v.getContext(), R.string.error_input_message, Toast.LENGTH_SHORT).show();
                         resultTextView.setText(getResources().getString(R.string.empty_text));
                     } else {
@@ -433,7 +433,7 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
                     if (!isInputEmpty(kInputText) && (isInputInteger(kInputText))) {
                         nValue = Integer.valueOf(nInputText);
                         kValue = Integer.valueOf(kInputText);
-                        AnimationUtils.animateButton(countNewtonButton, true);
+                        animateButton(countNewtonButton, true);
                         resultTextView.setText(String.valueOf(countVariationWithRepetition(nValue, kValue)));
                         break;
                     }
@@ -441,11 +441,11 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
                 case 3: {
                     if (isKSymbolGreater() || isInputEmpty(kInputText) || (!isInputInteger(kInputText))) {
                         setInputsEmpty();
-                        AnimationUtils.animateButton(countNewtonButton, false);
+                        animateButton(countNewtonButton, false);
                         Toast.makeText(v.getContext(), R.string.error_input_message, Toast.LENGTH_SHORT).show();
                         resultTextView.setText(getResources().getString(R.string.empty_text));
                     } else {
-                        AnimationUtils.animateButton(countNewtonButton, true);
+                        animateButton(countNewtonButton, true);
                         resultTextView.setText(String.valueOf(valueV.
                                 multiply(countNewtonBinomial(nValue, kValue)).
                                 multiply(countLoopedFactorial(kValue))));
@@ -453,11 +453,10 @@ public class MyActivity extends AppCompatActivity implements View.OnClickListene
                     break;
                 }
                 case 4: {
-                    Log.d("O co chodzi ?", nInputText);
                     if (isInputInteger(nInputText)) {
                         new CountFactorialTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     } else {
-                        AnimationUtils.animateButton(countNewtonButton, false);
+                        animateButton(countNewtonButton, false);
                         Toast.makeText(v.getContext(), R.string.error_input_message, Toast.LENGTH_SHORT).show();
                         resultTextView.setText(getResources().getString(R.string.empty_text));
                     }
